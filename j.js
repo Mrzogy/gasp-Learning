@@ -230,15 +230,35 @@ function render() {
 
 function startAnimation() {
 
+    let currentFrame = -1;
+
+    // Render Loop مستقل عن ScrollTrigger
+    function animationLoop() {
+
+        const frameIndex = Math.round(playhead.frame);
+
+        // لا نعيد الرسم إذا ما تغير الفريم
+        if (frameIndex !== currentFrame) {
+
+            currentFrame = frameIndex;
+
+            render();
+        }
+
+        requestAnimationFrame(animationLoop);
+    }
+
+
+    // تشغيل Render Loop
+    requestAnimationFrame(animationLoop);
+
+
+    // GSAP يتحكم فقط بقيمة الـ Frame
     gsap.to(playhead, {
 
-        // Frame 0 → Frame 240
         frame: frameCount - 1,
 
         ease: "none",
-
-        // يخليه ينتقل بين Frames صحيحة
-        snap: "frame",
 
         scrollTrigger: {
 
@@ -248,15 +268,15 @@ function startAnimation() {
 
             end: "bottom bottom",
 
-            // Smooth Scroll Scrubbing
-            scrub: 0.5
+            scrub: true,
 
-        },
+            // pin: canvas,
+            onUpdate: (self) => {
 
+                console.log(self.progress);
 
-        // كل ما تغير Frame
-        // ارسم الصورة الجديدة
-        onUpdate: render
+            }
+        }
 
     });
 }
