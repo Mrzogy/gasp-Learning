@@ -204,9 +204,38 @@ resizeCanvas();
 
 
 // إذا تغير حجم الشاشة
+let lastWidth =
+    window.innerWidth;
+
+
 window.addEventListener(
     "resize",
-    resizeCanvas
+    () => {
+
+        const currentWidth =
+            window.innerWidth;
+
+
+        // على الجوال نتجاهل تغير الارتفاع فقط
+        // الناتج من Browser UI
+        if (
+            window.innerWidth <= 768 &&
+            currentWidth === lastWidth
+        ) {
+            return;
+        }
+
+
+        lastWidth =
+            currentWidth;
+
+
+        resizeCanvas();
+
+
+        ScrollTrigger.refresh();
+
+    }
 );
 
 
@@ -266,16 +295,13 @@ for (let i = 1; i <= frameCount; i++) {
 
 function render() {
 
-    // نحول رقم الفريم إلى Integer
     const frameIndex =
         Math.round(playhead.frame);
-
 
     const image =
         images[frameIndex];
 
 
-    // حماية
     if (
         !image ||
         !image.complete ||
@@ -285,81 +311,102 @@ function render() {
     }
 
 
-    // ======================================
-    // object-fit: cover
-    // ======================================
+    const canvasWidth =
+        canvas.width;
 
-    const canvasRatio =
-        canvas.width / canvas.height;
+    const canvasHeight =
+        canvas.height;
 
 
-    const imageRatio =
-        image.naturalWidth /
+    const imageWidth =
+        image.naturalWidth;
+
+    const imageHeight =
         image.naturalHeight;
 
 
-    let width;
-    let height;
-
-    let x;
-    let y;
+    const isMobile =
+        window.innerWidth <= 768;
 
 
-    if (imageRatio > canvasRatio) {
+    // ======================================
+    // COVER SCALE
+    // ======================================
 
-        // الصورة أعرض من الشاشة
-
-        height =
-            canvas.height;
-
-        width =
-            image.naturalWidth *
-            (canvas.height / image.naturalHeight);
-
-
-        x =
-            (canvas.width - width) / 2;
-
-        y = 0;
-
-    } else {
-
-        // الصورة أطول من الشاشة
-
-        width =
-            canvas.width;
-
-        height =
-            image.naturalHeight *
-            (canvas.width / image.naturalWidth);
+    const scale =
+        Math.max(
+            canvasWidth / imageWidth,
+            canvasHeight / imageHeight
+        );
 
 
-        x = 0;
+    const drawWidth =
+        imageWidth * scale;
 
-        y =
-            (canvas.height - height) / 2;
+    const drawHeight =
+        imageHeight * scale;
+
+
+    // ======================================
+    // IMAGE POSITION
+    // ======================================
+
+    let positionX = 0.5;
+    let positionY = 0.5;
+
+
+    /*
+        Desktop:
+        center center
+
+        Mobile:
+        نقدر نغير هذه القيمة لاحقًا
+        حسب مكان العنصر المهم في الفيديو
+    */
+
+    if (isMobile) {
+
+        positionX = 0.5;
+        positionY = 0.5;
+
     }
 
 
-    // تنظيف Canvas
+    const x =
+        (canvasWidth - drawWidth) *
+        positionX;
+
+
+    const y =
+        (canvasHeight - drawHeight) *
+        positionY;
+
+
+    // ======================================
+    // CLEAR
+    // ======================================
+
     ctx.clearRect(
         0,
         0,
-        canvas.width,
-        canvas.height
+        canvasWidth,
+        canvasHeight
     );
 
 
-    // رسم الفريم
+    // ======================================
+    // DRAW
+    // ======================================
+
     ctx.drawImage(
         image,
         x,
         y,
-        width,
-        height
+        drawWidth,
+        drawHeight
     );
-}
 
+}
 
 // ==========================================
 // 7. Start Animation
@@ -1411,14 +1458,34 @@ function setupSmoothScroll() {
                     link.getAttribute("href");
 
 
-                // نتجاهل href="#"
-                if (
-                    !targetId ||
-                    targetId === "#"
-                ) {
+                if (!targetId) {
                     return;
                 }
 
+
+                // ======================================
+                // LOGO / HOME
+                // href="#"
+                // ======================================
+
+                if (targetId === "#") {
+
+                    event.preventDefault();
+
+
+                    smoothScrollTo(
+                        0,
+                        1.6
+                    );
+
+
+                    return;
+                }
+
+
+                // ======================================
+                // NORMAL SECTIONS
+                // ======================================
 
                 const target =
                     document.querySelector(
@@ -1434,18 +1501,21 @@ function setupSmoothScroll() {
                 event.preventDefault();
 
 
-                // مكان العنصر
                 const targetY =
-                    target.getBoundingClientRect().top +
+                    target
+                        .getBoundingClientRect()
+                        .top +
                     window.scrollY;
 
 
-                // تعويض ارتفاع الـ Navbar
-                const navbarOffset = 110;
+                const navbarOffset =
+                    110;
 
 
                 smoothScrollTo(
-                    targetY - navbarOffset,
+                    targetY -
+                    navbarOffset,
+
                     1.4
                 );
 
