@@ -22,3 +22,265 @@ body {
 
     display: block;
 }
+
+.navbar {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    width: calc(100% - 80px);
+    height: 72px;
+
+    padding: 0 28px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    z-index: 1000;
+
+    color: white;
+
+    border: 1px solid transparent;
+    border-radius: 20px;
+
+    box-sizing: border-box;
+
+    transition:
+        background 0.4s ease,
+        backdrop-filter 0.4s ease,
+        border-color 0.4s ease,
+        box-shadow 0.4s ease;
+}
+
+
+/* لما المستخدم يسوي Scroll */
+
+.navbar.scrolled {
+
+    background: rgba(15, 15, 15, 0.55);
+
+    backdrop-filter: blur(18px);
+
+    -webkit-backdrop-filter: blur(18px);
+
+    border-color: rgba(255, 255, 255, 0.12);
+
+    box-shadow:
+
+        0 10px 40px rgba(0, 0, 0, 0.15);
+
+}
+
+
+/* Logo */
+
+.nav-logo {
+    color: white;
+    text-decoration: none;
+
+    font-size: 20px;
+    font-weight: 600;
+
+    letter-spacing: -0.5px;
+}
+
+
+/* Center Links */
+
+.nav-links {
+    display: flex;
+    align-items: center;
+
+    gap: 40px;
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+
+    font-size: 14px;
+    font-weight: 400;
+
+    opacity: 0.8;
+
+    overflow: hidden;
+
+    height: 20px;
+
+    display: block;
+
+    transition: opacity 0.3s ease;
+}
+
+.nav-links a:hover {
+    opacity: 1;
+}
+
+.nav-links a:hover {
+    opacity: 1;
+    transform: translateY(-2px);
+}
+
+
+/* Contact */
+
+.nav-contact {
+    position: relative;
+    overflow: hidden;
+
+    color: white;
+    text-decoration: none;
+
+    font-size: 14px;
+
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 100px;
+
+    padding: 12px 22px;
+
+    transition: border-color 0.4s ease;
+}
+
+
+/* الدائرة */
+
+.contact-fill {
+    position: absolute;
+
+    width: 0;
+    height: 0;
+
+    left: var(--x, 50%);
+    top: var(--y, 50%);
+
+    background: white;
+    border-radius: 50%;
+
+    transform: translate(-50%, -50%);
+
+    transition:
+        width 0.5s cubic-bezier(0.76, 0, 0.24, 1),
+        height 0.5s cubic-bezier(0.76, 0, 0.24, 1);
+
+    z-index: 0;
+}
+
+
+/* النص */
+
+.contact-text {
+    position: relative;
+    z-index: 1;
+
+    transition: color 0.3s ease;
+}
+
+
+/* Hover */
+
+.nav-contact:hover .contact-fill {
+    width: 200px;
+    height: 200px;
+}
+
+.nav-contact:hover .contact-text {
+    color: black;
+}
+
+.nav-text {
+    display: flex;
+    flex-direction: column;
+
+    transform: translateY(0);
+
+    transition: transform 0.45s cubic-bezier(0.76,
+            0,
+            0.24,
+            1);
+}
+
+.nav-text span {
+    display: block;
+
+    height: 20px;
+    line-height: 20px;
+}
+
+.nav-link:hover .nav-text {
+    transform: translateY(-20px);
+}
+
+.hero-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    padding: 0 8vw;
+
+    color: white;
+
+    pointer-events: none;
+
+    z-index: 10;
+}
+
+.hero-title {
+    font-size: clamp(70px, 10vw, 170px);
+    line-height: 0.85;
+    letter-spacing: -0.06em;
+    font-weight: 600;
+}
+
+.hero-subtitle {
+    margin-top: 30px;
+
+    font-size: 14px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+
+    opacity: 0.6;
+}
+
+.story {
+    position: fixed;
+    top: 50%;
+    left: 8vw;
+
+    transform: translateY(-50%);
+
+    color: white;
+
+    z-index: 20;
+    pointer-events: none;
+
+    opacity: 0;
+    visibility: hidden;
+}
+
+.story-label {
+    margin-bottom: 18px;
+
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+
+    opacity: 0.6;
+}
+
+.story h2 {
+    font-size: clamp(50px, 7vw, 120px);
+    line-height: 0.9;
+    letter-spacing: -0.05em;
+
+    font-weight: 500;
+}

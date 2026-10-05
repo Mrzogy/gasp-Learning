@@ -255,28 +255,121 @@ function startAnimation() {
 
     // GSAP يتحكم فقط بقيمة الـ Frame
     gsap.to(playhead, {
-
         frame: frameCount - 1,
-
         ease: "none",
 
         scrollTrigger: {
-
             trigger: ".video-section",
-
             start: "top top",
-
             end: "bottom bottom",
-
             scrub: true,
 
-            // pin: canvas,
             onUpdate: (self) => {
-
-                console.log(self.progress);
-
+                console.log(
+                    "progress:", self.progress.toFixed(4),
+                    "frame:", Math.round(playhead.frame)
+                );
             }
+        }
+    });
+
+    const navbar = document.querySelector(".navbar");
+
+    window.addEventListener("scroll", () => {
+
+        if (window.scrollY > 50) {
+            navbar.classList.add("scrolled");
+        } else {
+            navbar.classList.remove("scrolled");
         }
 
     });
+
+    const contactButton = document.querySelector(".nav-contact");
+
+    contactButton.addEventListener("mouseenter", (event) => {
+
+        const rect = contactButton.getBoundingClientRect();
+
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+
+        contactButton.style.setProperty("--x", `${x}px`);
+        contactButton.style.setProperty("--y", `${y}px`);
+    });
+
+    gsap.to(".hero-title", {
+        y: -120,
+        opacity: 0,
+
+        scrollTrigger: {
+            trigger: ".video-section",
+            start: "top top",
+            end: "15% top",
+            scrub: true
+        }
+    });
+
+    gsap.to(".hero-subtitle", {
+        y: -50,
+        opacity: 0,
+
+        scrollTrigger: {
+            trigger: ".video-section",
+            start: "top top",
+            end: "10% top",
+            scrub: true
+        }
+    });
+
+    const storyTwo = gsap.timeline({
+        scrollTrigger: {
+            trigger: ".video-section",
+
+            // يبدأ تقريبًا عند 25% من الرحلة
+            start: "25% top",
+
+            // وينتهي عند 55%
+            end: "55% top",
+
+            scrub: true
+        }
+    });
+
+    storyTwo
+        // دخول
+        .fromTo(
+            ".story-two",
+            {
+                opacity: 0,
+                y: 80,
+                visibility: "visible"
+            },
+            {
+                opacity: 1,
+                y: 0,
+                duration: 1,
+                ease: "power2.out"
+            }
+        )
+
+        // يبقى ظاهر فترة
+        .to(
+            ".story-two",
+            {
+                opacity: 1,
+                duration: 2
+            }
+        )
+
+        // خروج
+        .to(
+            ".story-two",
+            {
+                opacity: 0,
+                y: -80,
+                duration: 1,
+                ease: "power2.in"
+            }
+        );
 }
