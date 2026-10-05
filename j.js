@@ -1388,3 +1388,822 @@ function setupContactAnimations() {
     );
 
 }
+
+// ==========================================
+// SMOOTH ANCHOR SCROLL
+// ==========================================
+
+function setupSmoothScroll() {
+
+    const links =
+        document.querySelectorAll(
+            'a[href^="#"]'
+        );
+
+
+    links.forEach((link) => {
+
+        link.addEventListener(
+            "click",
+            (event) => {
+
+                const targetId =
+                    link.getAttribute("href");
+
+
+                // نتجاهل href="#"
+                if (
+                    !targetId ||
+                    targetId === "#"
+                ) {
+                    return;
+                }
+
+
+                const target =
+                    document.querySelector(
+                        targetId
+                    );
+
+
+                if (!target) {
+                    return;
+                }
+
+
+                event.preventDefault();
+
+
+                // مكان العنصر
+                const targetY =
+                    target.getBoundingClientRect().top +
+                    window.scrollY;
+
+
+                // تعويض ارتفاع الـ Navbar
+                const navbarOffset = 110;
+
+
+                smoothScrollTo(
+                    targetY - navbarOffset,
+                    1.4
+                );
+
+            }
+        );
+
+    });
+
+}
+
+// ==========================================
+// CUSTOM SMOOTH SCROLL
+// ==========================================
+
+function smoothScrollTo(
+    targetY,
+    duration = 1.4
+) {
+
+    const startY =
+        window.scrollY;
+
+
+    const distance =
+        targetY - startY;
+
+
+    const startTime =
+        performance.now();
+
+
+    function easeInOutCubic(t) {
+
+        return t < 0.5
+
+            ? 4 * t * t * t
+
+            : 1 -
+            Math.pow(
+                -2 * t + 2,
+                3
+            ) / 2;
+
+    }
+
+
+    function animation(
+        currentTime
+    ) {
+
+        const elapsed =
+            currentTime - startTime;
+
+
+        const progress =
+            Math.min(
+                elapsed /
+                (duration * 1000),
+                1
+            );
+
+
+        const easedProgress =
+            easeInOutCubic(
+                progress
+            );
+
+
+        window.scrollTo(
+            0,
+            startY +
+            distance *
+            easedProgress
+        );
+
+
+        if (progress < 1) {
+
+            requestAnimationFrame(
+                animation
+            );
+
+        } else {
+
+            ScrollTrigger.update();
+
+        }
+
+    }
+
+
+    requestAnimationFrame(
+        animation
+    );
+
+}
+
+
+// ==========================================
+// CUSTOM CURSOR
+// ==========================================
+
+
+// ==========================================
+// MAGNETIC ELEMENTS
+// ==========================================
+
+
+// ==========================================
+// CUSTOM CURSOR
+// ==========================================
+
+
+// ==========================================
+// MAGNETIC ELEMENTS
+// ==========================================
+// ==========================================
+// CUSTOM CURSOR
+// ==========================================
+
+function setupCustomCursor() {
+
+    const cursor =
+        document.querySelector(".custom-cursor");
+
+
+    if (!cursor) {
+
+        console.error(
+            "Custom Cursor element not found!"
+        );
+
+        return;
+    }
+
+
+    // ======================================
+    // Desktop Only
+    // ======================================
+
+    const supportsHover =
+        window.matchMedia(
+            "(hover: hover) and (pointer: fine)"
+        ).matches;
+
+
+    if (!supportsHover) {
+
+        console.log(
+            "Custom Cursor disabled on touch device"
+        );
+
+        return;
+    }
+
+
+    // ======================================
+    // Mouse Position
+    // ======================================
+
+    let mouseX =
+        window.innerWidth / 2;
+
+    let mouseY =
+        window.innerHeight / 2;
+
+
+    let cursorX =
+        mouseX;
+
+    let cursorY =
+        mouseY;
+
+
+    window.addEventListener(
+        "mousemove",
+        (event) => {
+
+            mouseX =
+                event.clientX;
+
+            mouseY =
+                event.clientY;
+
+
+            cursor.classList.add(
+                "visible"
+            );
+
+        }
+    );
+
+
+    // ======================================
+    // Mouse Leave
+    // ======================================
+
+    document.addEventListener(
+        "mouseleave",
+        () => {
+
+            cursor.classList.remove(
+                "visible"
+            );
+
+        }
+    );
+
+
+    document.addEventListener(
+        "mouseenter",
+        () => {
+
+            cursor.classList.add(
+                "visible"
+            );
+
+        }
+    );
+
+
+    // ======================================
+    // Smooth Movement
+    // ======================================
+
+    function cursorLoop() {
+
+        cursorX +=
+            (mouseX - cursorX) * 0.22;
+
+
+        cursorY +=
+            (mouseY - cursorY) * 0.22;
+
+
+        cursor.style.left =
+            `${cursorX}px`;
+
+
+        cursor.style.top =
+            `${cursorY}px`;
+
+
+        requestAnimationFrame(
+            cursorLoop
+        );
+
+    }
+
+
+    cursorLoop();
+
+
+    // ======================================
+    // Interactive Elements
+    // ======================================
+
+    const interactiveElements =
+        document.querySelectorAll(
+            `
+            a,
+            button,
+            .service-item
+            `
+        );
+
+
+    interactiveElements.forEach(
+        (element) => {
+
+            element.addEventListener(
+                "mouseenter",
+                () => {
+
+                    cursor.classList.add(
+                        "cursor-hover"
+                    );
+
+                }
+            );
+
+
+            element.addEventListener(
+                "mouseleave",
+                () => {
+
+                    cursor.classList.remove(
+                        "cursor-hover"
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+    // ======================================
+    // Projects
+    // ======================================
+
+    document
+        .querySelectorAll(".project-image")
+        .forEach((project) => {
+
+            project.addEventListener(
+                "mouseenter",
+                () => {
+
+                    cursor.classList.remove(
+                        "cursor-hover"
+                    );
+
+                    cursor.classList.add(
+                        "cursor-project"
+                    );
+
+                }
+            );
+
+
+            project.addEventListener(
+                "mouseleave",
+                () => {
+
+                    cursor.classList.remove(
+                        "cursor-project"
+                    );
+
+                }
+            );
+
+        });
+
+}
+function setupMagneticElements() {
+
+    const supportsHover =
+        window.matchMedia(
+            "(hover: hover) and (pointer: fine)"
+        ).matches;
+
+
+    if (!supportsHover) {
+        return;
+    }
+
+
+    const elements =
+        document.querySelectorAll(
+            ".nav-contact, .contact-circle"
+        );
+
+
+    elements.forEach((element) => {
+
+        element.addEventListener(
+            "mousemove",
+            (event) => {
+
+                const rect =
+                    element.getBoundingClientRect();
+
+
+                const x =
+                    event.clientX -
+                    rect.left -
+                    rect.width / 2;
+
+
+                const y =
+                    event.clientY -
+                    rect.top -
+                    rect.height / 2;
+
+
+                gsap.to(
+                    element,
+                    {
+                        x: x * 0.18,
+                        y: y * 0.18,
+
+                        duration: 0.35,
+
+                        ease: "power3.out",
+
+                        overwrite: true
+                    }
+                );
+
+            }
+        );
+
+
+        element.addEventListener(
+            "mouseleave",
+            () => {
+
+                gsap.to(
+                    element,
+                    {
+                        x: 0,
+                        y: 0,
+
+                        duration: 0.7,
+
+                        ease:
+                            "elastic.out(1, 0.4)",
+
+                        overwrite: true
+                    }
+                );
+
+            }
+        );
+
+    });
+
+}
+
+
+// ==========================================
+// MOBILE MENU
+// ==========================================
+
+function setupMobileMenu() {
+
+    const menu =
+        document.querySelector(
+            ".mobile-menu"
+        );
+
+
+    const menuButton =
+        document.querySelector(
+            ".mobile-menu-button"
+        );
+
+
+    const menuText =
+        document.querySelector(
+            ".mobile-menu-text"
+        );
+
+
+    const links =
+        document.querySelectorAll(
+            ".mobile-menu-link"
+        );
+
+
+    if (
+        !menu ||
+        !menuButton
+    ) {
+        return;
+    }
+
+
+    let isOpen = false;
+
+
+    // ======================================
+    // GSAP TIMELINE
+    // ======================================
+
+    const timeline =
+        gsap.timeline({
+            paused: true
+        });
+
+
+    timeline
+        .set(
+            menu,
+            {
+                visibility:
+                    "visible"
+            }
+        )
+
+        .to(
+            menu,
+            {
+                clipPath:
+                    "inset(0 0 0% 0)",
+
+                duration:
+                    0.8,
+
+                ease:
+                    "power4.inOut"
+            }
+        )
+
+        .from(
+            ".mobile-menu-top",
+            {
+                y: 20,
+
+                opacity: 0,
+
+                duration:
+                    0.5,
+
+                ease:
+                    "power3.out"
+            },
+
+            "-=0.35"
+        )
+
+        .from(
+            ".mobile-link-text",
+            {
+                yPercent: 120,
+
+                duration:
+                    0.8,
+
+                stagger:
+                    0.07,
+
+                ease:
+                    "power4.out"
+            },
+
+            "-=0.35"
+        )
+
+        .from(
+            ".mobile-link-number",
+            {
+                opacity: 0,
+
+                x: -10,
+
+                duration:
+                    0.5,
+
+                stagger:
+                    0.07,
+
+                ease:
+                    "power3.out"
+            },
+
+            "-=0.65"
+        )
+
+        .from(
+            ".mobile-menu-bottom",
+            {
+                y: 20,
+
+                opacity: 0,
+
+                duration:
+                    0.5,
+
+                ease:
+                    "power3.out"
+            },
+
+            "-=0.5"
+        );
+
+
+    // ======================================
+    // OPEN
+    // ======================================
+
+    function openMenu() {
+
+        if (isOpen) return;
+
+        isOpen = true;
+
+
+        menu.classList.add(
+            "is-open"
+        );
+
+
+        menuButton.classList.add(
+            "is-open"
+        );
+
+
+        navbar.classList.add(
+            "menu-open"
+        );
+
+
+        if (menuText) {
+            menuText.textContent =
+                "Close";
+        }
+
+
+        // وقف Scroll الصفحة
+
+        document.body.style.overflow =
+            "hidden";
+
+
+        timeline.play();
+
+    }
+
+
+    // ======================================
+    // CLOSE
+    // ======================================
+
+    function closeMenu() {
+
+        if (!isOpen) return;
+
+        isOpen = false;
+
+
+        menuButton.classList.remove(
+            "is-open"
+        );
+
+
+        navbar.classList.remove(
+            "menu-open"
+        );
+
+
+        if (menuText) {
+            menuText.textContent =
+                "Menu";
+        }
+
+
+        document.body.style.overflow =
+            "";
+
+
+        timeline.reverse();
+
+
+        timeline.eventCallback(
+            "onReverseComplete",
+            () => {
+
+                menu.classList.remove(
+                    "is-open"
+                );
+
+
+                gsap.set(
+                    menu,
+                    {
+                        visibility:
+                            "hidden"
+                    }
+                );
+
+            }
+        );
+
+    }
+
+
+    // ======================================
+    // BUTTON
+    // ======================================
+
+    menuButton.addEventListener(
+        "click",
+        () => {
+
+            if (isOpen) {
+
+                closeMenu();
+
+            } else {
+
+                openMenu();
+
+            }
+
+        }
+    );
+
+
+    // ======================================
+    // CLICK LINK
+    // ======================================
+
+    links.forEach(
+        (link) => {
+
+            link.addEventListener(
+                "click",
+                () => {
+
+                    closeMenu();
+
+                }
+            );
+
+        }
+    );
+
+
+    // ======================================
+    // ESC
+    // ======================================
+
+    document.addEventListener(
+        "keydown",
+        (event) => {
+
+            if (
+                event.key ===
+                "Escape"
+            ) {
+
+                closeMenu();
+
+            }
+
+        }
+    );
+
+
+    // ======================================
+    // RESIZE
+    // ======================================
+
+    window.addEventListener(
+        "resize",
+        () => {
+
+            if (
+                window.innerWidth >
+                768 &&
+                isOpen
+            ) {
+
+                closeMenu();
+
+            }
+
+        }
+    );
+
+}
+
+setupSmoothScroll();
+
+setupCustomCursor();
+
+setupMagneticElements();
+
+setupMobileMenu();
