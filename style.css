@@ -1,17 +1,35 @@
+/* ==========================================
+   RESET
+========================================== */
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: auto;
+}
+
 body {
     background: black;
 }
 
+
+/* ==========================================
+   VIDEO SECTION
+========================================== */
+
 .video-section {
-    height: 500vh;
     position: relative;
+    height: 500vh;
 }
+
+
+/* ==========================================
+   CANVAS
+========================================== */
 
 #hero-canvas {
     position: sticky;
@@ -23,8 +41,14 @@ body {
     display: block;
 }
 
+
+/* ==========================================
+   NAVBAR
+========================================== */
+
 .navbar {
     position: fixed;
+
     top: 20px;
     left: 50%;
 
@@ -41,54 +65,58 @@ body {
 
     z-index: 1000;
 
-    color: white;
+    color: rgb(4, 3, 3);
 
     border: 1px solid transparent;
     border-radius: 20px;
 
-    box-sizing: border-box;
-
     transition:
-        background 0.4s ease,
+        background-color 0.4s ease,
         backdrop-filter 0.4s ease,
         border-color 0.4s ease,
-        box-shadow 0.4s ease;
+        box-shadow 0.4s ease,
+        color 0.4s ease;
 }
 
 
-/* لما المستخدم يسوي Scroll */
+/* ==========================================
+   NAVBAR - DARK / HERO
+========================================== */
 
 .navbar.scrolled {
-
     background: rgba(15, 15, 15, 0.55);
 
     backdrop-filter: blur(18px);
-
     -webkit-backdrop-filter: blur(18px);
 
     border-color: rgba(255, 255, 255, 0.12);
 
     box-shadow:
-
         0 10px 40px rgba(0, 0, 0, 0.15);
-
 }
 
 
-/* Logo */
+/* ==========================================
+   LOGO
+========================================== */
 
 .nav-logo {
     color: white;
+
     text-decoration: none;
 
     font-size: 20px;
     font-weight: 600;
 
     letter-spacing: -0.5px;
+
+    transition: color 0.4s ease;
 }
 
 
-/* Center Links */
+/* ==========================================
+   NAV LINKS
+========================================== */
 
 .nav-links {
     display: flex;
@@ -98,7 +126,14 @@ body {
 }
 
 .nav-links a {
+    height: 20px;
+
+    display: block;
+
+    overflow: hidden;
+
     color: white;
+
     text-decoration: none;
 
     font-size: 14px;
@@ -106,89 +141,19 @@ body {
 
     opacity: 0.8;
 
-    overflow: hidden;
-
-    height: 20px;
-
-    display: block;
-
-    transition: opacity 0.3s ease;
-}
-
-.nav-links a:hover {
-    opacity: 1;
-}
-
-.nav-links a:hover {
-    opacity: 1;
-    transform: translateY(-2px);
-}
-
-
-/* Contact */
-
-.nav-contact {
-    position: relative;
-    overflow: hidden;
-
-    color: white;
-    text-decoration: none;
-
-    font-size: 14px;
-
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    border-radius: 100px;
-
-    padding: 12px 22px;
-
-    transition: border-color 0.4s ease;
-}
-
-
-/* الدائرة */
-
-.contact-fill {
-    position: absolute;
-
-    width: 0;
-    height: 0;
-
-    left: var(--x, 50%);
-    top: var(--y, 50%);
-
-    background: white;
-    border-radius: 50%;
-
-    transform: translate(-50%, -50%);
-
     transition:
-        width 0.5s cubic-bezier(0.76, 0, 0.24, 1),
-        height 0.5s cubic-bezier(0.76, 0, 0.24, 1);
+        opacity 0.3s ease,
+        color 0.4s ease;
+}
 
-    z-index: 0;
+.nav-links a:hover {
+    opacity: 1;
 }
 
 
-/* النص */
-
-.contact-text {
-    position: relative;
-    z-index: 1;
-
-    transition: color 0.3s ease;
-}
-
-
-/* Hover */
-
-.nav-contact:hover .contact-fill {
-    width: 200px;
-    height: 200px;
-}
-
-.nav-contact:hover .contact-text {
-    color: black;
-}
+/* ==========================================
+   ROLLING TEXT
+========================================== */
 
 .nav-text {
     display: flex;
@@ -196,7 +161,8 @@ body {
 
     transform: translateY(0);
 
-    transition: transform 0.45s cubic-bezier(0.76,
+    transition:
+        transform 0.45s cubic-bezier(0.76,
             0,
             0.24,
             1);
@@ -213,8 +179,133 @@ body {
     transform: translateY(-20px);
 }
 
+
+/* ==========================================
+   LET'S TALK BUTTON
+========================================== */
+
+.nav-contact {
+    position: relative;
+
+    overflow: hidden;
+
+    color: white;
+
+    text-decoration: none;
+
+    font-size: 14px;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.4);
+
+    border-radius: 100px;
+
+    padding: 12px 22px;
+
+    transition:
+        color 0.4s ease,
+        border-color 0.4s ease;
+}
+
+
+/* ==========================================
+   CONTACT FILL
+========================================== */
+
+.contact-fill {
+    position: absolute;
+
+    width: 0;
+    height: 0;
+
+    left: var(--x, 50%);
+    top: var(--y, 50%);
+
+    background: white;
+
+    border-radius: 50%;
+
+    transform: translate(-50%, -50%);
+
+    z-index: 0;
+
+    transition:
+        width 0.5s cubic-bezier(0.76,
+            0,
+            0.24,
+            1),
+        height 0.5s cubic-bezier(0.76,
+            0,
+            0.24,
+            1),
+        background-color 0.4s ease;
+}
+
+
+/* ==========================================
+   CONTACT TEXT
+========================================== */
+
+.contact-text {
+    position: relative;
+
+    z-index: 1;
+
+    color: inherit;
+
+    transition:
+        color 0.3s ease;
+}
+
+
+/* ==========================================
+   CONTACT HOVER - DARK NAVBAR
+========================================== */
+
+.nav-contact:hover .contact-fill {
+    width: 200px;
+    height: 200px;
+}
+
+.nav-contact:hover .contact-text {
+    color: #111;
+}
+
+
+/* ==========================================
+   NAVBAR LIGHT MODE
+   About Section
+========================================== */
+
+.navbar.light,
+.navbar.scrolled.light {
+
+    color: #111;
+
+    background:
+        rgba(242, 240, 235, 0.82);
+
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    border-color:
+        rgba(0, 0, 0, 0.1);
+
+    box-shadow:
+        0 10px 40px rgba(0, 0, 0, 0.08);
+}
+
+
+
+
+
+/* ==========================================
+   HERO CONTENT
+========================================== */
+
 .hero-content {
     position: absolute;
+
     top: 0;
     left: 0;
 
@@ -234,53 +325,291 @@ body {
     z-index: 10;
 }
 
+
+/* ==========================================
+   HERO TITLE
+========================================== */
+
 .hero-title {
-    font-size: clamp(70px, 10vw, 170px);
+    font-size:
+        clamp(70px, 10vw, 170px);
+
     line-height: 0.85;
+
     letter-spacing: -0.06em;
+
     font-weight: 600;
 }
+
+
+/* ==========================================
+   HERO SUBTITLE
+========================================== */
 
 .hero-subtitle {
     margin-top: 30px;
 
     font-size: 14px;
+
     letter-spacing: 0.15em;
+
     text-transform: uppercase;
 
     opacity: 0.6;
 }
 
+
+/* ==========================================
+   STORY TWO
+========================================== */
+
 .story {
     position: fixed;
+
     top: 50%;
     left: 8vw;
 
-    transform: translateY(-50%);
+    transform:
+        translateY(-50%);
 
     color: white;
 
     z-index: 20;
+
     pointer-events: none;
 
     opacity: 0;
+
     visibility: hidden;
 }
+
 
 .story-label {
     margin-bottom: 18px;
 
     font-size: 12px;
+
     text-transform: uppercase;
+
     letter-spacing: 0.2em;
 
     opacity: 0.6;
 }
 
+
 .story h2 {
-    font-size: clamp(50px, 7vw, 120px);
+    font-size:
+        clamp(50px, 7vw, 120px);
+
     line-height: 0.9;
+
     letter-spacing: -0.05em;
 
     font-weight: 500;
+}
+
+
+/* ==========================================
+   STORY THREE
+========================================== */
+
+.story-three {
+    position: fixed;
+
+    inset: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    color: white;
+
+    z-index: 20;
+
+    pointer-events: none;
+
+    opacity: 0;
+
+    visibility: hidden;
+}
+
+
+.story-three p {
+    margin-bottom: 15px;
+
+    font-size: 13px;
+
+    letter-spacing: 0.35em;
+
+    text-transform: uppercase;
+}
+
+
+.story-three h2 {
+    font-size:
+        clamp(100px, 18vw, 300px);
+
+    line-height: 0.8;
+
+    font-weight: 600;
+
+    letter-spacing: -0.07em;
+
+    white-space: nowrap;
+}
+
+
+/* ==========================================
+   ABOUT SECTION
+========================================== */
+
+.about-section {
+    position: relative;
+
+    min-height: 100vh;
+
+    background: #f2f0eb;
+
+    color: #111;
+
+    z-index: 30;
+
+    padding:
+        140px 8vw;
+
+    border-radius:
+        40px 40px 0 0;
+
+    overflow: hidden;
+}
+
+
+.about-inner {
+    max-width: 1600px;
+
+    margin: 0 auto;
+}
+
+
+/* ==========================================
+   ABOUT LABEL
+========================================== */
+
+.section-label {
+    margin-bottom: 60px;
+
+    font-size: 12px;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.2em;
+
+    opacity: 0.5;
+}
+
+
+/* ==========================================
+   ABOUT TITLE
+========================================== */
+
+.about-title {
+    font-size:
+        clamp(55px, 8vw, 140px);
+
+    line-height: 0.9;
+
+    letter-spacing: -0.06em;
+
+    font-weight: 500;
+}
+
+
+/* ==========================================
+   ABOUT BOTTOM
+========================================== */
+
+.about-bottom {
+    margin-top: 100px;
+
+    display: flex;
+
+    align-items: flex-end;
+
+    justify-content: space-between;
+
+    gap: 40px;
+}
+
+
+.about-bottom p {
+    max-width: 450px;
+
+    font-size: 18px;
+
+    line-height: 1.6;
+}
+
+
+.about-bottom span {
+    font-size: 12px;
+
+    opacity: 0.5;
+}
+
+/* ==========================================
+   ABOUT NAVBAR - LIGHT MODE
+========================================== */
+
+.navbar.light {
+    background: rgba(242, 240, 235, 0.88);
+
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    border-color: rgba(0, 0, 0, 0.12);
+
+    box-shadow:
+        0 10px 40px rgba(0, 0, 0, 0.08);
+
+    color: #111;
+}
+
+
+/* Logo */
+
+.navbar.light .nav-logo {
+    color: #111;
+}
+
+
+/* Links */
+
+.navbar.light .nav-links a {
+    color: #111;
+}
+
+
+/* Let's Talk */
+
+.navbar.light .nav-contact {
+    color: #111;
+
+    border-color: rgba(0, 0, 0, 0.35);
+}
+
+
+/* الدائرة داخل Let's Talk */
+
+.navbar.light .contact-fill {
+    background: #111;
+}
+
+
+/* Hover */
+
+.navbar.light .nav-contact:hover .contact-text {
+    color: #fff;
 }

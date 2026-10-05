@@ -101,24 +101,25 @@ for (let i = 1; i <= frameCount; i++) {
         loadedImages++;
 
 
-        console.log(
-            `Loaded ${loadedImages}/${frameCount}`
-        );
-
-
         // إذا انتهى تحميل كل الفريمات
         if (loadedImages === frameCount) {
 
-            console.log(
-                "ALL FRAMES LOADED 🔥"
-            );
+            console.log("ALL FRAMES LOADED 🔥");
 
             // عرض أول Frame
             render();
 
-            // تشغيل Animation
+            // تشغيل الموقع
             startAnimation();
         }
+    };
+
+
+    img.onerror = () => {
+
+        console.error(
+            `Failed to load frame: ${frameNumber}`
+        );
     };
 
 
@@ -132,7 +133,7 @@ for (let i = 1; i <= frameCount; i++) {
 
 function render() {
 
-    // نحول الرقم إلى integer
+    // نحول رقم الفريم إلى Integer
     const frameIndex =
         Math.round(playhead.frame);
 
@@ -160,7 +161,8 @@ function render() {
 
 
     const imageRatio =
-        image.width / image.height;
+        image.naturalWidth /
+        image.naturalHeight;
 
 
     let width;
@@ -174,11 +176,12 @@ function render() {
 
         // الصورة أعرض من الشاشة
 
-        height = canvas.height;
+        height =
+            canvas.height;
 
         width =
-            image.width *
-            (canvas.height / image.height);
+            image.naturalWidth *
+            (canvas.height / image.naturalHeight);
 
 
         x =
@@ -190,11 +193,12 @@ function render() {
 
         // الصورة أطول من الشاشة
 
-        width = canvas.width;
+        width =
+            canvas.width;
 
         height =
-            image.height *
-            (canvas.width / image.width);
+            image.naturalHeight *
+            (canvas.width / image.naturalWidth);
 
 
         x = 0;
@@ -225,19 +229,48 @@ function render() {
 
 
 // ==========================================
-// 7. GSAP Scroll Animation
+// 7. Start Animation
 // ==========================================
 
 function startAnimation() {
 
+    setupFrameAnimation();
+
+    setupNavbar();
+
+    setupContactButton();
+
+    setupHeroAnimations();
+
+    setupStoryTwo();
+
+    setupStoryThree();
+
+    setupAboutAnimations();
+
+
+    // بعد إنشاء جميع ScrollTriggers
+    ScrollTrigger.refresh();
+}
+
+
+// ==========================================
+// 8. Frame Sequence Animation
+// ==========================================
+
+function setupFrameAnimation() {
+
     let currentFrame = -1;
+
 
     // Render Loop مستقل عن ScrollTrigger
     function animationLoop() {
 
-        const frameIndex = Math.round(playhead.frame);
+        const frameIndex =
+            Math.round(playhead.frame);
 
-        // لا نعيد الرسم إذا ما تغير الفريم
+
+        // لا نعيد الرسم إلا إذا تغير الفريم
         if (frameIndex !== currentFrame) {
 
             currentFrame = frameIndex;
@@ -245,131 +278,566 @@ function startAnimation() {
             render();
         }
 
-        requestAnimationFrame(animationLoop);
+
+        requestAnimationFrame(
+            animationLoop
+        );
     }
 
 
-    // تشغيل Render Loop
-    requestAnimationFrame(animationLoop);
+    requestAnimationFrame(
+        animationLoop
+    );
 
 
-    // GSAP يتحكم فقط بقيمة الـ Frame
-    gsap.to(playhead, {
-        frame: frameCount - 1,
-        ease: "none",
+    // GSAP يتحكم بقيمة الفريم
+    gsap.to(
+        playhead,
+        {
 
-        scrollTrigger: {
-            trigger: ".video-section",
-            start: "top top",
-            end: "bottom bottom",
-            scrub: true,
+            frame:
+                frameCount - 1,
 
-            onUpdate: (self) => {
-                console.log(
-                    "progress:", self.progress.toFixed(4),
-                    "frame:", Math.round(playhead.frame)
-                );
+            ease:
+                "none",
+
+            scrollTrigger: {
+
+                trigger:
+                    ".video-section",
+
+                start:
+                    "top top",
+
+                end:
+                    "bottom bottom",
+
+                scrub:
+                    true
             }
+
         }
-    });
+    );
+}
+
+
+// ==========================================
+// 9. Navbar
+// ==========================================
+
+function setupNavbar() {
 
     const navbar = document.querySelector(".navbar");
+    const about = document.querySelector(".about-section");
 
-    window.addEventListener("scroll", () => {
+    if (!navbar || !about) return;
 
-        if (window.scrollY > 50) {
-            navbar.classList.add("scrolled");
-        } else {
-            navbar.classList.remove("scrolled");
-        }
 
-    });
+    ScrollTrigger.create({
 
-    const contactButton = document.querySelector(".nav-contact");
+        trigger: document.body,
 
-    contactButton.addEventListener("mouseenter", (event) => {
+        start: "top top",
+        end: "bottom bottom",
 
-        const rect = contactButton.getBoundingClientRect();
+        onUpdate: () => {
 
-        const x = event.clientX - rect.left;
-        const y = event.clientY - rect.top;
+            const scrollY = window.scrollY;
 
-        contactButton.style.setProperty("--x", `${x}px`);
-        contactButton.style.setProperty("--y", `${y}px`);
-    });
+            const aboutRect =
+                about.getBoundingClientRect();
 
-    gsap.to(".hero-title", {
-        y: -120,
-        opacity: 0,
 
-        scrollTrigger: {
-            trigger: ".video-section",
-            start: "top top",
-            end: "15% top",
-            scrub: true
-        }
-    });
+            // =====================================
+            // 1. ABOUT
+            // Navbar أبيض + كلام أسود
+            // =====================================
 
-    gsap.to(".hero-subtitle", {
-        y: -50,
-        opacity: 0,
+            if (aboutRect.top <= 110) {
 
-        scrollTrigger: {
-            trigger: ".video-section",
-            start: "top top",
-            end: "10% top",
-            scrub: true
-        }
-    });
+                navbar.classList.add("scrolled");
+                navbar.classList.add("light");
 
-    const storyTwo = gsap.timeline({
-        scrollTrigger: {
-            trigger: ".video-section",
-
-            // يبدأ تقريبًا عند 25% من الرحلة
-            start: "25% top",
-
-            // وينتهي عند 55%
-            end: "55% top",
-
-            scrub: true
-        }
-    });
-
-    storyTwo
-        // دخول
-        .fromTo(
-            ".story-two",
-            {
-                opacity: 0,
-                y: 80,
-                visibility: "visible"
-            },
-            {
-                opacity: 1,
-                y: 0,
-                duration: 1,
-                ease: "power2.out"
             }
-        )
 
-        // يبقى ظاهر فترة
-        .to(
-            ".story-two",
-            {
-                opacity: 1,
-                duration: 2
-            }
-        )
 
-        // خروج
-        .to(
-            ".story-two",
-            {
-                opacity: 0,
-                y: -80,
-                duration: 1,
-                ease: "power2.in"
+            // =====================================
+            // 2. HERO أثناء السكرول
+            // Navbar أسود Glass + كلام أبيض
+            // =====================================
+
+            else if (scrollY > 50) {
+
+                navbar.classList.add("scrolled");
+                navbar.classList.remove("light");
+
             }
+
+
+            // =====================================
+            // 3. أعلى الصفحة
+            // Navbar شفاف + كلام أبيض
+            // =====================================
+
+            else {
+
+                navbar.classList.remove("scrolled");
+                navbar.classList.remove("light");
+
+            }
+
+        }
+
+    });
+
+
+    // تحديث الحالة مباشرة عند تحميل الصفحة
+    ScrollTrigger.refresh();
+}
+
+
+// ==========================================
+// 10. Contact Button
+// ==========================================
+
+function setupContactButton() {
+
+    const contactButton =
+        document.querySelector(
+            ".nav-contact"
         );
+
+
+    if (!contactButton) {
+        return;
+    }
+
+
+    contactButton.addEventListener(
+        "mouseenter",
+        (event) => {
+
+            const rect =
+                contactButton
+                    .getBoundingClientRect();
+
+
+            const x =
+                event.clientX -
+                rect.left;
+
+
+            const y =
+                event.clientY -
+                rect.top;
+
+
+            contactButton.style
+                .setProperty(
+                    "--x",
+                    `${x}px`
+                );
+
+
+            contactButton.style
+                .setProperty(
+                    "--y",
+                    `${y}px`
+                );
+        }
+    );
+}
+
+
+// ==========================================
+// 11. Hero Animations
+// ==========================================
+
+function setupHeroAnimations() {
+
+    // Hero Title
+    gsap.to(
+        ".hero-title",
+        {
+
+            y:
+                -120,
+
+            opacity:
+                0,
+
+            ease:
+                "none",
+
+            scrollTrigger: {
+
+                trigger:
+                    ".video-section",
+
+                start:
+                    "top top",
+
+                end:
+                    "15% top",
+
+                scrub:
+                    true
+            }
+
+        }
+    );
+
+
+    // Hero Subtitle
+    gsap.to(
+        ".hero-subtitle",
+        {
+
+            y:
+                -50,
+
+            opacity:
+                0,
+
+            ease:
+                "none",
+
+            scrollTrigger: {
+
+                trigger:
+                    ".video-section",
+
+                start:
+                    "top top",
+
+                end:
+                    "10% top",
+
+                scrub:
+                    true
+            }
+
+        }
+    );
+}
+
+
+// ==========================================
+// 12. Story Two
+// ==========================================
+
+function setupStoryTwo() {
+
+    const storyTwo =
+        gsap.timeline({
+
+            scrollTrigger: {
+
+                trigger:
+                    ".video-section",
+
+                start:
+                    "25% top",
+
+                end:
+                    "55% top",
+
+                scrub:
+                    true
+            }
+
+        });
+
+
+    // دخول
+    storyTwo.fromTo(
+
+        ".story-two",
+
+        {
+            opacity:
+                0,
+
+            y:
+                80,
+
+            visibility:
+                "visible"
+        },
+
+        {
+            opacity:
+                1,
+
+            y:
+                0,
+
+            duration:
+                1,
+
+            ease:
+                "power2.out"
+        }
+
+    );
+
+
+    // يبقى ظاهر
+    storyTwo.to(
+
+        ".story-two",
+
+        {
+            opacity:
+                1,
+
+            duration:
+                2
+        }
+
+    );
+
+
+    // خروج
+    storyTwo.to(
+
+        ".story-two",
+
+        {
+            opacity:
+                0,
+
+            y:
+                -80,
+
+            duration:
+                1,
+
+            ease:
+                "power2.in"
+        }
+
+    );
+}
+
+
+// ==========================================
+// 13. Story Three
+// ==========================================
+
+function setupStoryThree() {
+
+    const storyThree =
+        gsap.timeline({
+
+            scrollTrigger: {
+
+                trigger:
+                    ".video-section",
+
+                start:
+                    "60% top",
+
+                end:
+                    "85% top",
+
+                scrub:
+                    true
+            }
+
+        });
+
+
+    // دخول
+    storyThree.fromTo(
+
+        ".story-three",
+
+        {
+            opacity:
+                0,
+
+            scale:
+                0.8,
+
+            visibility:
+                "visible"
+        },
+
+        {
+            opacity:
+                1,
+
+            scale:
+                1,
+
+            duration:
+                1,
+
+            ease:
+                "power2.out"
+        }
+
+    );
+
+
+    // يبقى ظاهر
+    storyThree.to(
+
+        ".story-three",
+
+        {
+            opacity:
+                1,
+
+            scale:
+                1,
+
+            duration:
+                2
+        }
+
+    );
+
+
+    // خروج
+    storyThree.to(
+
+        ".story-three",
+
+        {
+            opacity:
+                0,
+
+            scale:
+                1.15,
+
+            duration:
+                1,
+
+            ease:
+                "power2.in"
+        }
+
+    );
+}
+
+
+// ==========================================
+// 14. About Section
+// ==========================================
+
+function setupAboutAnimations() {
+
+    // ======================================
+    // About Section Reveal
+    // ======================================
+
+    gsap.fromTo(
+
+        ".about-section",
+
+        {
+            y:
+                150
+        },
+
+        {
+            y:
+                0,
+
+            ease:
+                "none",
+
+            scrollTrigger: {
+
+                trigger:
+                    ".about-section",
+
+                start:
+                    "top bottom",
+
+                end:
+                    "top 85%",
+
+                scrub:
+                    true
+            }
+        }
+
+    );
+
+
+    // ======================================
+    // About Title
+    // ======================================
+
+    gsap.from(
+
+        ".about-title",
+
+        {
+            y:
+                100,
+
+            opacity:
+                0,
+
+            ease:
+                "power3.out",
+
+            duration:
+                1.2,
+
+            scrollTrigger: {
+
+                trigger:
+                    ".about-section",
+
+                start:
+                    "top 70%",
+
+                toggleActions:
+                    "play none none reverse"
+            }
+        }
+
+    );
+
+
+    // ======================================
+    // About Bottom
+    // ======================================
+
+    gsap.from(
+
+        ".about-bottom",
+
+        {
+            y:
+                50,
+
+            opacity:
+                0,
+
+            ease:
+                "power3.out",
+
+            duration:
+                1,
+
+            scrollTrigger: {
+
+                trigger:
+                    ".about-section",
+
+                start:
+                    "top 60%",
+
+                toggleActions:
+                    "play none none reverse"
+            }
+        }
+
+    );
 }
