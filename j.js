@@ -6,6 +6,141 @@ gsap.registerPlugin(ScrollTrigger);
 
 
 // ==========================================
+// NAVBAR - مستقل عن تحميل الـ Frames
+// ==========================================
+
+const navbar = document.querySelector(".navbar");
+const aboutSection = document.querySelector(".about-section");
+
+
+function updateNavbarState() {
+
+    if (!navbar) return;
+
+
+    const navbarBottom =
+        navbar.getBoundingClientRect().bottom;
+
+
+    // ==========================================
+    // الأقسام الفاتحة
+    // ==========================================
+
+    const lightSections = [
+        document.querySelector(".about-section"),
+        document.querySelector(".services-section")
+    ];
+
+
+    // هل الـ Navbar فوق قسم فاتح الآن؟
+    const isOverLightSection =
+        lightSections.some((section) => {
+
+            if (!section) return false;
+
+            const rect =
+                section.getBoundingClientRect();
+
+            return (
+                rect.top <= navbarBottom &&
+                rect.bottom > navbarBottom
+            );
+
+        });
+
+
+    // ==========================================
+    // LIGHT SECTION
+    // About / Services
+    // ==========================================
+
+    if (isOverLightSection) {
+
+        navbar.classList.add("scrolled");
+        navbar.classList.add("light");
+
+        return;
+    }
+
+
+    // ==========================================
+    // DARK SECTION
+    // Hero / Work
+    // ==========================================
+
+    if (window.scrollY > 50) {
+
+        navbar.classList.add("scrolled");
+        navbar.classList.remove("light");
+
+        return;
+    }
+
+
+    // ==========================================
+    // TOP OF PAGE
+    // Transparent
+    // ==========================================
+
+    navbar.classList.remove("scrolled");
+    navbar.classList.remove("light");
+}
+
+
+// ==========================================
+// تشغيل مباشر
+// ==========================================
+
+updateNavbarState();
+
+
+// ==========================================
+// Scroll
+// ==========================================
+
+window.addEventListener(
+    "scroll",
+    updateNavbarState,
+    { passive: true }
+);
+
+
+// ==========================================
+// Refresh / Reload
+// ==========================================
+
+window.addEventListener("load", () => {
+
+    // ننتظر المتصفح يرجع Scroll Position
+    requestAnimationFrame(() => {
+
+        requestAnimationFrame(() => {
+
+            updateNavbarState();
+
+        });
+
+    });
+
+});
+
+
+// ==========================================
+// Back / Forward
+// ==========================================
+
+window.addEventListener("pageshow", () => {
+
+    requestAnimationFrame(() => {
+
+        updateNavbarState();
+
+    });
+
+});
+
+
+// ==========================================
 // 2. Canvas
 // ==========================================
 
@@ -106,10 +241,8 @@ for (let i = 1; i <= frameCount; i++) {
 
             console.log("ALL FRAMES LOADED 🔥");
 
-            // عرض أول Frame
             render();
 
-            // تشغيل الموقع
             startAnimation();
         }
     };
@@ -236,8 +369,6 @@ function startAnimation() {
 
     setupFrameAnimation();
 
-    setupNavbar();
-
     setupContactButton();
 
     setupHeroAnimations();
@@ -248,8 +379,12 @@ function startAnimation() {
 
     setupAboutAnimations();
 
+    setupWorkAnimations();
 
-    // بعد إنشاء جميع ScrollTriggers
+    setupServicesAnimations();
+
+    setupContactAnimations();
+
     ScrollTrigger.refresh();
 }
 
@@ -333,6 +468,62 @@ function setupNavbar() {
     if (!navbar || !about) return;
 
 
+    // ==========================================
+    // Update Navbar State
+    // ==========================================
+
+    function updateNavbar() {
+
+        const scrollY = window.scrollY;
+
+        const aboutRect =
+            about.getBoundingClientRect();
+
+
+        // ======================================
+        // ABOUT
+        // أبيض + كلام أسود
+        // ======================================
+
+        if (aboutRect.top <= 110) {
+
+            navbar.classList.add("scrolled");
+            navbar.classList.add("light");
+
+        }
+
+
+        // ======================================
+        // HERO
+        // Glass داكن + كلام أبيض
+        // ======================================
+
+        else if (scrollY > 50) {
+
+            navbar.classList.add("scrolled");
+            navbar.classList.remove("light");
+
+        }
+
+
+        // ======================================
+        // TOP
+        // شفاف + كلام أبيض
+        // ======================================
+
+        else {
+
+            navbar.classList.remove("scrolled");
+            navbar.classList.remove("light");
+
+        }
+    }
+
+
+    // ==========================================
+    // ScrollTrigger
+    // ==========================================
+
     ScrollTrigger.create({
 
         trigger: document.body,
@@ -340,59 +531,47 @@ function setupNavbar() {
         start: "top top",
         end: "bottom bottom",
 
-        onUpdate: () => {
+        onUpdate: updateNavbar,
 
-            const scrollY = window.scrollY;
-
-            const aboutRect =
-                about.getBoundingClientRect();
-
-
-            // =====================================
-            // 1. ABOUT
-            // Navbar أبيض + كلام أسود
-            // =====================================
-
-            if (aboutRect.top <= 110) {
-
-                navbar.classList.add("scrolled");
-                navbar.classList.add("light");
-
-            }
-
-
-            // =====================================
-            // 2. HERO أثناء السكرول
-            // Navbar أسود Glass + كلام أبيض
-            // =====================================
-
-            else if (scrollY > 50) {
-
-                navbar.classList.add("scrolled");
-                navbar.classList.remove("light");
-
-            }
-
-
-            // =====================================
-            // 3. أعلى الصفحة
-            // Navbar شفاف + كلام أبيض
-            // =====================================
-
-            else {
-
-                navbar.classList.remove("scrolled");
-                navbar.classList.remove("light");
-
-            }
-
-        }
+        onRefresh: updateNavbar
 
     });
 
 
-    // تحديث الحالة مباشرة عند تحميل الصفحة
-    ScrollTrigger.refresh();
+    // ==========================================
+    // مهم جدًا
+    // لو المستخدم عمل Refresh وهو داخل About
+    // ==========================================
+
+    updateNavbar();
+
+
+    // المتصفح أحيانًا يسترجع Scroll Position
+    // بعد اكتمال تحميل الصفحة
+    window.addEventListener(
+        "load",
+        () => {
+
+            updateNavbar();
+
+            ScrollTrigger.refresh();
+
+        }
+    );
+
+
+    // ==========================================
+    // Back / Forward Cache
+    // ==========================================
+
+    window.addEventListener(
+        "pageshow",
+        () => {
+
+            updateNavbar();
+
+        }
+    );
 }
 
 
@@ -840,4 +1019,372 @@ function setupAboutAnimations() {
         }
 
     );
+}
+
+// ==========================================
+// WORK ANIMATIONS
+// ==========================================
+
+function setupWorkAnimations() {
+
+    // ======================================
+    // WORK TITLE
+    // ======================================
+
+    gsap.from(
+        ".work-title h2",
+        {
+            y: 120,
+            opacity: 0,
+
+            duration: 1.2,
+
+            ease: "power4.out",
+
+            scrollTrigger: {
+                trigger: ".work-title",
+
+                start: "top 85%",
+
+                toggleActions:
+                    "play none none reverse"
+            }
+        }
+    );
+
+
+    // ======================================
+    // EACH PROJECT
+    // ======================================
+
+    gsap.utils
+        .toArray(".project")
+        .forEach((project) => {
+
+            const image =
+                project.querySelector(
+                    ".project-image img"
+                );
+
+            const info =
+                project.querySelector(
+                    ".project-info"
+                );
+
+
+            // Project Reveal
+            gsap.from(
+                project,
+                {
+                    y: 100,
+                    opacity: 0,
+
+                    duration: 1,
+
+                    ease: "power3.out",
+
+                    scrollTrigger: {
+                        trigger: project,
+
+                        start: "top 90%",
+
+                        toggleActions:
+                            "play none none reverse"
+                    }
+                }
+            );
+
+
+            // ==================================
+            // IMAGE PARALLAX
+            // ==================================
+
+            gsap.fromTo(
+                image,
+
+                {
+                    yPercent: 8
+                },
+
+                {
+                    yPercent: 8,
+
+                    ease: "none",
+
+                    scrollTrigger: {
+                        trigger: project,
+
+                        start: "top bottom",
+
+                        end: "bottom top",
+
+                        scrub: true
+                    }
+                }
+            );
+
+
+            // ==================================
+            // PROJECT INFO
+            // ==================================
+
+            gsap.from(
+                info,
+                {
+                    y: 30,
+                    opacity: 0,
+
+                    duration: 0.8,
+
+                    ease: "power2.out",
+
+                    scrollTrigger: {
+                        trigger: info,
+
+                        start: "top 95%",
+
+                        toggleActions:
+                            "play none none reverse"
+                    }
+                }
+            );
+
+        });
+
+
+}
+
+
+// ==========================================
+// SERVICES ANIMATIONS
+// ==========================================
+
+function setupServicesAnimations() {
+
+    // ======================================
+    // BIG TITLE
+    // ======================================
+
+    gsap.from(
+        ".services-heading h2",
+        {
+            y: 120,
+            opacity: 0,
+
+            duration: 1.2,
+
+            ease: "power4.out",
+
+            scrollTrigger: {
+                trigger: ".services-heading",
+
+                start: "top 85%",
+
+                toggleActions:
+                    "play none none reverse"
+            }
+        }
+    );
+
+
+    // ======================================
+    // HEADER
+    // ======================================
+
+    gsap.from(
+        ".services-header",
+        {
+            y: 30,
+            opacity: 0,
+
+            duration: 0.8,
+
+            ease: "power3.out",
+
+            scrollTrigger: {
+                trigger: ".services-header",
+
+                start: "top 90%",
+
+                toggleActions:
+                    "play none none reverse"
+            }
+        }
+    );
+
+
+    // ======================================
+    // SERVICE ITEMS
+    // ======================================
+
+    gsap.utils
+        .toArray(".service-item")
+        .forEach((item, index) => {
+
+            gsap.from(
+                item,
+                {
+                    y: 60,
+                    opacity: 0,
+
+                    duration: 0.9,
+
+                    delay:
+                        index * 0.03,
+
+                    ease:
+                        "power3.out",
+
+                    scrollTrigger: {
+                        trigger: item,
+
+                        start: "top 92%",
+
+                        toggleActions:
+                            "play none none reverse"
+                    }
+                }
+            );
+
+        });
+
+}
+
+// ==========================================
+// CONTACT ANIMATIONS
+// ==========================================
+
+function setupContactAnimations() {
+
+    // ======================================
+    // TOP
+    // ======================================
+
+    gsap.from(
+        ".contact-top",
+        {
+            opacity: 0,
+            y: 30,
+
+            duration: 0.8,
+
+            ease: "power3.out",
+
+            scrollTrigger: {
+                trigger: ".contact-section",
+
+                start: "top 80%",
+
+                toggleActions:
+                    "play none none reverse"
+            }
+        }
+    );
+
+
+    // ======================================
+    // FIRST LINE
+    // من اليسار
+    // ======================================
+
+    gsap.from(
+        ".contact-line-left span",
+        {
+            xPercent: -40,
+            opacity: 0,
+
+            duration: 1.3,
+
+            ease: "power4.out",
+
+            scrollTrigger: {
+                trigger: ".contact-heading",
+
+                start: "top 85%",
+
+                toggleActions:
+                    "play none none reverse"
+            }
+        }
+    );
+
+
+    // ======================================
+    // SECOND LINE
+    // من اليمين
+    // ======================================
+
+    gsap.from(
+        ".contact-line-right span",
+        {
+            xPercent: 40,
+            opacity: 0,
+
+            duration: 1.3,
+
+            ease: "power4.out",
+
+            scrollTrigger: {
+                trigger: ".contact-heading",
+
+                start: "top 85%",
+
+                toggleActions:
+                    "play none none reverse"
+            }
+        }
+    );
+
+
+    // ======================================
+    // CIRCLE
+    // ======================================
+
+    gsap.from(
+        ".contact-circle",
+        {
+            scale: 0.5,
+            opacity: 0,
+
+            duration: 1,
+
+            ease: "back.out(1.4)",
+
+            scrollTrigger: {
+                trigger: ".contact-action",
+
+                start: "top 90%",
+
+                toggleActions:
+                    "play none none reverse"
+            }
+        }
+    );
+
+
+    // ======================================
+    // FOOTER
+    // ======================================
+
+    gsap.from(
+        ".contact-footer",
+        {
+            y: 40,
+            opacity: 0,
+
+            duration: 1,
+
+            ease: "power3.out",
+
+            scrollTrigger: {
+                trigger: ".contact-footer",
+
+                start: "top 95%",
+
+                toggleActions:
+                    "play none none reverse"
+            }
+        }
+    );
+
 }
